@@ -47,7 +47,8 @@ main = do
     runSpock 8080 (spock spockCfg app)
 
 app :: Api
-app = get "feeds" $ json [
+app = do
+    get "feeds" $ json [
             RSSChannel { channelId = nil, name = "Min blag", items = [
                   RSSItem { itemId = nil, title = "Min title", content = "Lite stuff" }
                 ]
@@ -58,3 +59,4 @@ app = get "feeds" $ json [
                 ]
             }
           ]
+    get ("feeds" <//> var) $ \id -> json RSSChannel { channelId = id, name = "Kul", items = [] }
