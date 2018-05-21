@@ -49,6 +49,7 @@ executable openapi-test-exe
     , text
     , uuid
     , feed
+    , optparse-applicative
   other-modules:
       Paths_openapi_test
   default-language: Haskell2010
