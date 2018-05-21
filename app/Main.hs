@@ -6,10 +6,15 @@ module Main where
 import Web.Spock
 import Web.Spock.Config
 
+import Data.Maybe
+import Control.Applicative
 import Data.Aeson hiding (json)
 import Data.Monoid ((<>))
 import Data.Text (Text, pack)
 import Data.UUID
+import Text.Feed.Import
+import qualified Text.Feed.Types as FeedTypes
+import qualified Text.RSS.Syntax as FeedRSS
 
 data RSSChannel = RSSChannel
     { channelId :: UUID
@@ -38,25 +43,33 @@ instance ToJSON RSSItem where
       ]
 
 
-type Api = SpockM () () () ()
-type ApiAction a = SpockAction () () () a
+newtype ApiContext = ApiContext
+    { channels :: [RSSChannel]
+    }
+
+type Api = SpockM () () ApiContext ()
 
 main :: IO ()
 main = do
-    spockCfg <- defaultSpockCfg () PCNoDatabase ()
+    feed <- parseFeedFromFile "sample.xml"
+    print $ show $ feedToChannel feed
+    spockCfg <- defaultSpockCfg () PCNoDatabase (ApiContext [feedToChannel feed])
     runSpock 8080 (spock spockCfg app)
+
+feedToChannel :: FeedTypes.Feed -> RSSChannel
+feedToChannel (FeedTypes.RSSFeed (FeedRSS.RSS _ _ FeedRSS.RSSChannel{..} _)) = RSSChannel nil rssTitle (map itemToItem rssItems)
+feedToChannel _ = error "Only RSSFeed supported"
+
+itemToItem :: FeedRSS.RSSItem -> RSSItem
+itemToItem FeedRSS.RSSItem{..} =
+    let title   = fromJust $ rssItemTitle <|> Just ""
+        content = fromJust $ rssItemDescription <|> Just ""
+    in RSSItem { itemId = nil, title = title, content = content}
+
 
 app :: Api
 app = do
-    get "feeds" $ json [
-            RSSChannel { channelId = nil, name = "Min blag", items = [
-                  RSSItem { itemId = nil, title = "Min title", content = "Lite stuff" }
-                ]
-            }
-          , RSSChannel { channelId = nil, name = "Min blag 1", items = [
-                  RSSItem { itemId = nil, title = "Min title 1", content = "Lite stuff 1" }
-                , RSSItem { itemId = nil, title = "Min title 2", content = "Lite stuff 2" }
-                ]
-            }
-          ]
+    get "feeds" $ do
+        (ApiContext channels) <- getState
+        json channels
     get ("feeds" <//> var) $ \id -> json RSSChannel { channelId = id, name = "Kul", items = [] }
