@@ -16,6 +16,8 @@ import qualified Text.Feed.Types as FeedTypes
 import qualified Text.RSS.Syntax as FeedRSS
 import Data.Semigroup ((<>))
 import qualified Options.Applicative as Opt
+import System.FilePath
+import System.Directory
 
 data RSSChannel = RSSChannel
     { channelId :: UUID
@@ -57,9 +59,10 @@ data Opts = Opts
 
 main :: IO ()
 main = do
-    feed <- parseFeedFromFile "sample.xml"
-    spockCfg <- defaultSpockCfg () PCNoDatabase (ApiContext [feedToChannel feed])
     (Opts port feedsdir) <- Opt.execParser commandline
+    feedFiles <- filter (\file -> takeExtension file == ".xml") <$> listDirectory feedsdir
+    feeds <- mapM parseFeedFromFile feedFiles
+    spockCfg <- defaultSpockCfg () PCNoDatabase (ApiContext $ map feedToChannel feeds)
     runSpock port (spock spockCfg app)
 
 feedToChannel :: FeedTypes.Feed -> RSSChannel
