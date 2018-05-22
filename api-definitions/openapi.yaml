@@ -3,24 +3,32 @@ info:
   title: Kaustik Simple RSS Backend
   description: Kaustik's simple RSS backend for our programming task
   version: 0.0.1
-servers: 
+servers:
   - url: localhost/api
 paths:
   /feeds:
     get:
-      description: Get all RSS channel feeds
+      description: Get all RSS feeds
       responses:
         '200':
-          description: A list of RSS channel feeds
+          description: A map of feeds from RSSChannelId to RSSChannel
           content:
             application/json:
               schema:
-                type: array
-                items:
+                type: object
+                additionalProperties:
                   $ref: '#/components/schemas/RSSChannel'
-  /feeds/{channelid}:
+                example:
+                  - 12345678-1234-1234-1234-123456789012:
+                      name: A jolly good blag
+                      items:
+                        - title: My fine blog post
+                          content: Hello World!
+                        - title: A jolly good blag past
+                          content: Hello ye old world
+  '/feeds/{channelid}':
     get:
-      description: Get one RSS channel feed
+      description: Get one RSS feed
       parameters:
         - name: channelid
           in: path
@@ -29,12 +37,12 @@ paths:
             $ref: '#/components/schemas/RSSChannelId'
       responses:
         '200':
-          description: Returned a found RSS feed
+          description: One found RSS feed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RSSChannel'
-        '400':
+        '404':
           description: No RSS feed found for that channel id
 components:
   schemas:
@@ -50,22 +58,15 @@ components:
           items:
             $ref: '#/components/schemas/RSSItem'
       required:
-        - id
         - name
         - items
       example:
-        - id: 00000000-1111-1111-1111-123456789012
-          name: My new blog about blogs
-          items: []
-        - id: 00000000-2222-2222-2222-123456789012
-          name: A jolly good blag
-          items:
-            - id: 12345678-1234-1234-1234-123456789012
-              title: My fine blog post
-              content: Hello World!
-            - id: 12345678-0000-0000-0000-123456789012
-              title: A jolly good blag past
-              content: Hello ye old world
+        name: A jolly good blag
+        items:
+          - title: My fine blog post
+            content: Hello World!
+          - title: A jolly good blag past
+            content: Hello ye old world
     RSSChannelId:
       type: string
       format: uuid
@@ -73,21 +74,15 @@ components:
     RSSItem:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
         title:
           type: string
         content:
           type: string
       required:
-        - id
         - title
         - content
       example:
-        - id: 12345678-1234-1234-1234-123456789012
-          title: My fine blog post
+        - title: My fine blog post
           content: Hello World!
-        - id: 12345678-0000-0000-0000-123456789012
-          title: A jolly good blag past
+        - title: A jolly good blag past
           content: Hello ye old world

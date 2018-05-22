@@ -7,5 +7,5 @@ import SimpleRSS.Feed
 main :: IO ()
 main = do
     (Options port feedsdir) <- getOptions
-    channels <- getChannels feedsdir
-    runApp port (AppContex channels)
+    channelMap <- getChannels feedsdir
+    runApp port (AppContex channelMap)
