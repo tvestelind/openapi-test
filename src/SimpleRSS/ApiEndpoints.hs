@@ -8,12 +8,15 @@ module SimpleRSS.ApiEndpoints
 
 import SimpleRSS.Feed
 
+import Data.Map ((!))
+import Data.Maybe
+import Data.UUID
 import Web.Spock
 import Web.Spock.Config
 
 type Port = Int
 newtype AppContex = AppContex
-    { channels :: [Channel]
+    { channels :: ChannelMap
     }
 
 runApp :: Port -> AppContex -> IO ()
@@ -31,4 +34,5 @@ app = do
         json channels
     get ("feeds" <//> var) $ \id -> do
         (AppContex channels) <- getState
-        json $ channels !! id
+        let uuid = fromJust $ fromText id
+        json $ channels ! uuid

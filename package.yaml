@@ -26,6 +26,14 @@ library:
   source-dirs: src
   dependencies:
     - optparse-applicative
+    - aeson
+    - Spock
+    - text
+    - uuid
+    - feed
+    - filepath
+    - directory
+    - containers
 
 executables:
   openapi-test-exe:
@@ -37,13 +45,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - openapi-test
-    - aeson
-    - Spock
-    - text
-    - uuid
-    - feed
-    - filepath
-    - directory
 
 tests:
   openapi-test-test:
