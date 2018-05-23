@@ -38,9 +38,14 @@ type ChannelMap = Map.Map UUID Channel
 
 getChannels :: FilePath -> IO ChannelMap
 getChannels path = do
-    feedFiles <- filter (\file -> takeExtension file == ".xml") <$> listDirectory path
-    feeds <- mapM parseFeedFromFile feedFiles
-    let channels = map feedToChannel feeds
+    feedFiles <- do
+        filesWithoutPath <- filter (\file -> takeExtension file == ".xml") <$> listDirectory path
+        return $ map (path </>) filesWithoutPath
+
+    channels <- do
+        feeds <- mapM parseFeedFromFile feedFiles
+        return $ map feedToChannel feeds
+
     uuidFeedPairs <- mapM (\c -> do
             uuid <- nextRandom
             return (uuid, c)
