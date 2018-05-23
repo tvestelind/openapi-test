@@ -8,10 +8,13 @@ module SimpleRSS.ApiEndpoints
 
 import SimpleRSS.Feed
 
-import Data.Map ((!))
+import Control.Monad
+import qualified Data.Map as Map
 import Data.Maybe
 import Data.UUID
+import Network.HTTP.Types.Status
 import Web.Spock
+import Web.Spock.Action
 import Web.Spock.Config
 
 type Port = Int
@@ -34,5 +37,14 @@ app = do
         json channels
     get ("feeds" <//> var) $ \id -> do
         (AppContex channels) <- getState
-        let uuid = fromJust $ fromText id
-        json $ channels ! uuid
+        let maybeUuid = fromText id
+        let uuid      = fromJust maybeUuid
+
+        when (isNothing maybeUuid) $ do
+            setStatus $ mkStatus 400 ""
+            json $ show id ++ " is not a proper UUID"
+        when (uuid `Map.notMember` channels) $ do
+            setStatus $ mkStatus 404 ""
+            json $ "couldn't find feed for UUID " ++ show uuid
+
+        json (channels Map.! uuid)

@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e035e7781cd4fe7d9f8c0efe5821d12053ad9bb3ea18203d41f19302aa377043
+-- hash: 7f03aa5e9d980978476dc3c5ecbeaae5ab62c66260da7f43a97c47289660bc9b
 
 name:           rss-dummy-backend
 version:        0.1.0.0
@@ -36,12 +36,14 @@ library
       src
   build-depends:
       Spock
+    , Spock-core
     , aeson
     , base >=4.7 && <5
     , containers
     , directory
     , feed
     , filepath
+    , http-types
     , optparse-applicative
     , text
     , uuid

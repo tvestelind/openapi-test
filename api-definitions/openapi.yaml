@@ -42,6 +42,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RSSChannel'
+        '400':
+          description: Supplied id was not a correct UUID
         '404':
           description: No RSS feed found for that channel id
 components:

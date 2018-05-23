@@ -28,6 +28,8 @@ library:
     - optparse-applicative
     - aeson
     - Spock
+    - Spock-core
+    - http-types
     - text
     - uuid
     - feed
