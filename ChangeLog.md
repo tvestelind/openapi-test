@@ -1,3 +1,3 @@
-# Changelog for openapi-test
+# Changelog for rss-dummy-backend
 
 ## Unreleased changes

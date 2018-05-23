@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Kaustik Simple RSS Backend
   description: Kaustik's simple RSS backend for our programming task
-  version: 0.0.1
+  version: 1.0.0
 servers:
   - url: localhost/api
 paths:

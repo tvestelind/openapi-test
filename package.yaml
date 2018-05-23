@@ -1,6 +1,6 @@
-name:                openapi-test
+name:                rss-dummy-backend
 version:             0.1.0.0
-github:              "tvestelind/openapi-test"
+github:              "tvestelind/rss-dummy-backend"
 license:             BSD3
 author:              "Tomas Vestelind"
 maintainer:          "tomas.vestelind@gmail.com"
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/tvestelind/openapi-test#readme>
+description:         Please see the README on GitHub at <https://github.com/tvestelind/rss-dummy-backend#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -36,7 +36,7 @@ library:
     - containers
 
 executables:
-  openapi-test-exe:
+  rss-dummy-backend-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -44,10 +44,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - openapi-test
+    - rss-dummy-backend
 
 tests:
-  openapi-test-test:
+  rss-dummy-backend-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -55,4 +55,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - openapi-test
+    - rss-dummy-backend

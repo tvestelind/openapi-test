@@ -2,13 +2,13 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e47bc77d12fbc96f4d9af742f18e1e99794345aebb3401630dd58ad74694ef81
+-- hash: e035e7781cd4fe7d9f8c0efe5821d12053ad9bb3ea18203d41f19302aa377043
 
-name:           openapi-test
+name:           rss-dummy-backend
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/tvestelind/openapi-test#readme>
-homepage:       https://github.com/tvestelind/openapi-test#readme
-bug-reports:    https://github.com/tvestelind/openapi-test/issues
+description:    Please see the README on GitHub at <https://github.com/tvestelind/rss-dummy-backend#readme>
+homepage:       https://github.com/tvestelind/rss-dummy-backend#readme
+bug-reports:    https://github.com/tvestelind/rss-dummy-backend/issues
 author:         Tomas Vestelind
 maintainer:     tomas.vestelind@gmail.com
 copyright:      none
@@ -22,7 +22,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/tvestelind/openapi-test
+  location: https://github.com/tvestelind/rss-dummy-backend
 
 library
   exposed-modules:
@@ -30,6 +30,10 @@ library
       SimpleRSS.ApiEndpoints
       SimpleRSS.Feed
       SimpleRSS.Options
+  other-modules:
+      Paths_rss_dummy_backend
+  hs-source-dirs:
+      src
   build-depends:
       Spock
     , aeson
@@ -41,33 +45,29 @@ library
     , optparse-applicative
     , text
     , uuid
-  other-modules:
-      Paths_openapi_test
-  hs-source-dirs:
-      src
   default-language: Haskell2010
 
-executable openapi-test-exe
+executable rss-dummy-backend-exe
   main-is: Main.hs
+  other-modules:
+      Paths_rss_dummy_backend
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , openapi-test
-  other-modules:
-      Paths_openapi_test
+    , rss-dummy-backend
   default-language: Haskell2010
 
-test-suite openapi-test-test
+test-suite rss-dummy-backend-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
+  other-modules:
+      Paths_rss_dummy_backend
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , openapi-test
-  other-modules:
-      Paths_openapi_test
+    , rss-dummy-backend
   default-language: Haskell2010
