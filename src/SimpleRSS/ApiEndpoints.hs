@@ -1,38 +1,44 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeOperators #-}
 
 module SimpleRSS.ApiEndpoints
     ( runApp
-    , AppContex(..)
     , Port
     ) where
 
 import SimpleRSS.Feed
 
-import Data.Map ((!))
-import Data.Maybe
 import Data.UUID
-import Web.Spock
-import Web.Spock.Config
+import Data.Map.Strict ((!?))
+import Data.Maybe
+import Network.Wai
+import Network.Wai.Handler.Warp
+import Servant
 
-type Port = Int
-newtype AppContex = AppContex
-    { channels :: ChannelMap
-    }
 
-runApp :: Port -> AppContex -> IO ()
-runApp port context = do
-    spockCfg <- defaultSpockCfg () PCNoDatabase context
-    runSpock port (spock spockCfg app)
+type FeedsApi = "feeds" :>
+    (    Get '[JSON] ChannelMap -- list feeds
+    :<|> Capture "channelid" UUID :> Get '[JSON] Channel -- view one feed
+    )
 
-type Session = ()
-type Database = ()
 
-app :: SpockM Session Database AppContex ()
-app = do
-    get "feeds" $ do
-        (AppContex channels) <- getState
-        json channels
-    get ("feeds" <//> var) $ \id -> do
-        (AppContex channels) <- getState
-        let uuid = fromJust $ fromText id
-        json $ channels ! uuid
+server :: ChannelMap -> Server FeedsApi
+server map = feeds
+    :<|> oneFeed
+
+    where feeds :: Handler ChannelMap
+          feeds = return map
+
+          oneFeed :: UUID -> Handler Channel
+          oneFeed uuid = maybe (throwError err404) return (map !? uuid)
+
+feedsAPI :: Proxy FeedsApi
+feedsAPI = Proxy
+
+app :: ChannelMap -> Application
+app map = serve feedsAPI (server map)
+
+runApp :: Port -> ChannelMap -> IO ()
+runApp port map = run port $ app map

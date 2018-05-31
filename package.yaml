@@ -27,13 +27,16 @@ library:
   dependencies:
     - optparse-applicative
     - aeson
-    - Spock
+    - http-types
     - text
     - uuid
     - feed
     - filepath
     - directory
     - containers
+    - servant-server
+    - warp
+    - wai
 
 executables:
   rss-dummy-backend-exe:
