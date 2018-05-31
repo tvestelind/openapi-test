@@ -11,14 +11,21 @@ module SimpleRSS.ApiEndpoints
 
 import SimpleRSS.Feed
 
-import Data.Text
-import Data.UUID
+import Control.Lens hiding ((.=))
 import Data.Map.Strict ((!?))
 import Data.Maybe
+import Data.Swagger
+import Data.Text
+import Data.UUID
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
+import Servant.Swagger
+import Servant.Swagger.UI
 
+type API =
+         SwaggerSchemaUI "docs" "swagger.json"
+    :<|> FeedsApi
 
 type FeedsApi = "feeds" :>
     (    Get '[JSON] ChannelMap -- list feeds
@@ -26,8 +33,10 @@ type FeedsApi = "feeds" :>
     )
 
 
-server :: ChannelMap -> Server FeedsApi
-server map = feeds
+server :: ChannelMap -> Server API
+server map =
+         swaggerSchemaUIServer swaggerDoc
+    :<|> feeds
     :<|> oneFeed
 
     where feeds :: Handler ChannelMap
@@ -39,11 +48,20 @@ server map = feeds
             maybe (throwError err404) return (map !? uuid)
             where uuidError = unpack $ uuidText `append` " not a proper UUID"
 
-feedsAPI :: Proxy FeedsApi
+swaggerDoc :: Swagger
+swaggerDoc = toSwagger (Proxy :: Proxy FeedsApi)
+    & info.title       .~ "RSS Dummy Backend"
+    & info.version     .~ "1.0.0"
+    & info.description ?~ "A dummy backend for playing RSS-ish data"
+
+
+feedsAPI :: Proxy API
 feedsAPI = Proxy
 
 app :: ChannelMap -> Application
 app map = serve feedsAPI (server map)
 
 runApp :: Port -> ChannelMap -> IO ()
-runApp port map = run port $ app map
+runApp port map = do
+    putStrLn $ "server running on http://localhost:" ++ show port
+    run port $ app map

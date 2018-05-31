@@ -10,8 +10,8 @@ module SimpleRSS.Feed
 
 import Control.Applicative
 import Data.Aeson hiding (json)
-import qualified Data.Map.Strict as Map
 import Data.Maybe
+import Data.Swagger
 import Data.Text (Text, pack)
 import Data.UUID
 import Data.UUID.V4
@@ -21,6 +21,7 @@ import System.FilePath
 import Text.Feed.Import
 import Text.Feed.Types hiding (RSSItem, Item)
 import Text.RSS.Syntax
+import qualified Data.Map.Strict as Map
 
 data Channel = Channel
     { name :: Text
@@ -34,6 +35,9 @@ data Item = Item
 
 instance ToJSON Channel
 instance ToJSON Item
+
+instance ToSchema Channel
+instance ToSchema Item
 
 type ChannelMap = Map.Map UUID Channel
 

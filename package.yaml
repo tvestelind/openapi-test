@@ -25,18 +25,22 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-    - optparse-applicative
     - aeson
-    - http-types
-    - text
-    - uuid
+    - containers
+    - directory
     - feed
     - filepath
-    - directory
-    - containers
+    - http-types
+    - lens
+    - optparse-applicative
     - servant-server
-    - warp
+    - servant-swagger
+    - servant-swagger-ui
+    - swagger2
+    - text
+    - uuid
     - wai
+    - warp
 
 executables:
   rss-dummy-backend-exe:
