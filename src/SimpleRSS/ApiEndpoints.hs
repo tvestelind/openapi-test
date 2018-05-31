@@ -2,6 +2,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module SimpleRSS.ApiEndpoints
     ( runApp
@@ -10,6 +11,7 @@ module SimpleRSS.ApiEndpoints
 
 import SimpleRSS.Feed
 
+import Data.Text
 import Data.UUID
 import Data.Map.Strict ((!?))
 import Data.Maybe
@@ -20,7 +22,7 @@ import Servant
 
 type FeedsApi = "feeds" :>
     (    Get '[JSON] ChannelMap -- list feeds
-    :<|> Capture "channelid" UUID :> Get '[JSON] Channel -- view one feed
+    :<|> Capture "channelid" Text :> Get '[JSON] Channel -- view one feed
     )
 
 
@@ -31,8 +33,11 @@ server map = feeds
     where feeds :: Handler ChannelMap
           feeds = return map
 
-          oneFeed :: UUID -> Handler Channel
-          oneFeed uuid = maybe (throwError err404) return (map !? uuid)
+          oneFeed :: Text -> Handler Channel
+          oneFeed uuidText = do
+            uuid <- maybe (throwError err400 { errReasonPhrase = uuidError}) return (fromText uuidText)
+            maybe (throwError err404) return (map !? uuid)
+            where uuidError = unpack $ uuidText `append` " not a proper UUID"
 
 feedsAPI :: Proxy FeedsApi
 feedsAPI = Proxy
