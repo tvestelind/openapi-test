@@ -5,6 +5,7 @@
 module SimpleRSS.Feed
     ( getChannels
     , ChannelMap
+    , Channel
     ) where
 
 import Control.Applicative

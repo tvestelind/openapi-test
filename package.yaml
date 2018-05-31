@@ -27,8 +27,6 @@ library:
   dependencies:
     - optparse-applicative
     - aeson
-    - Spock
-    - Spock-core
     - http-types
     - text
     - uuid
@@ -36,6 +34,9 @@ library:
     - filepath
     - directory
     - containers
+    - servant-server
+    - warp
+    - wai
 
 executables:
   rss-dummy-backend-exe:
