@@ -22,6 +22,7 @@ import Network.Wai.Handler.Warp
 import Servant
 import Servant.Swagger
 import Servant.Swagger.UI
+import Network.Wai.Middleware.Cors
 
 type API =
          SwaggerSchemaUI "docs" "swagger.json"
@@ -59,7 +60,7 @@ feedsAPI :: Proxy API
 feedsAPI = Proxy
 
 app :: ChannelMap -> Application
-app map = serve feedsAPI (server map)
+app map = simpleCors (serve feedsAPI (server map))
 
 runApp :: Port -> ChannelMap -> IO ()
 runApp port map = do
